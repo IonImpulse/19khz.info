@@ -1,0 +1,4 @@
+fastapi
+csv
+httpx
+dateparser
