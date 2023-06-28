@@ -13,8 +13,8 @@ import uvicorn
 BASE_URL = "https://19hz.info/events_"
 
 NAME_KEY_DICT = {
-    "San Francisco Bay Area / Northern California": "BayArea",
-    "Los Angeles / Southern California": "LosAngeles",
+    "Northern California": "BayArea",
+    "Southern California": "LosAngeles",
     "Texas": "Texas",
     "Florida": "Miami",
     "Atlanta": "Atlanta",
@@ -57,7 +57,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-state = {"events": {}, "genres": [], "name_key_dict": NAME_KEY_DICT}
+state = {"events": {}, "genres": []}
 
 async def scrape_all() -> List[List[dict]]:
     events = {}
@@ -202,6 +202,13 @@ def parse_date(date_string: str):
 
     return date_string
 
+def get_number(str) -> int:
+    try:
+        return int(re.sub("[^0-9]", "", str)[:2])
+    except Exception as e:
+        print(f"Error parsing number in '{str}': {e}")
+        return 0
+
 def parse_time(time_string: str, csv_key: str):
     time_string = time_string.strip()
     ampm = None
@@ -211,11 +218,11 @@ def parse_time(time_string: str, csv_key: str):
         time_string = time_string[:-2]
 
     if ":" in time_string:
-        hour = int(time_string.split(":")[0])
-        minute = int(time_string.split(":")[1])
+        hour = get_number(time_string.split(":")[0])
+        minute = get_number(time_string.split(":")[1])
         ampm = time_string.split(":")[1]
     else:
-        hour = int(time_string)
+        hour = get_number(time_string[:2])
         minute = 0
         ampm = time_string
 
@@ -244,7 +251,7 @@ async def get_genres():
 
 @app.get("/areas")
 async def get_locations():
-    return state["name_key_dict"]
+    return NAME_KEY_DICT
 
 
 class BackgroundRunner:

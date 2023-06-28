@@ -1,24 +1,54 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
+import Header from './components/header.js';
+
+// If dev, api is localhost:8000
+// If prod, api is https://19khz.info/
+const api = window.location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://19khz.info';
 
 function App() {
+  const [loading, setLoading] = React.useState(2);
+
+  const [events, setEvents] = React.useState([]);
+  const [areas, setAreas] = React.useState([]);
+
+  const [selectedArea, setSelectedArea] = React.useState(null);
+
+  React.useEffect(() => {
+    fetch(`${api}/events`)
+      .then(res => res.json())
+      .then(data => {
+        setEvents(data);
+        setLoading(prev => prev - 1);
+      });
+  }, []);
+
+  React.useEffect(() => {
+    fetch(`${api}/areas`)
+      .then(res => res.json())
+      .then(data => {
+        setAreas(data);
+        setLoading(prev => prev - 1);
+      });
+  }, []);
+
+  React.useEffect(() => {
+    if (loading === 0) {
+      document.getElementById('loader').className = "done";
+    }
+  }, [loading]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div className="App">
+        <Header events={events} areas={areas} selectedArea={selectedArea} setSelectedArea={setSelectedArea} />
+      </div>
+
+      <div id="loader">
+        <img src="logo512.png"></img>
+      </div>
+    </>
+    
   );
 }
 

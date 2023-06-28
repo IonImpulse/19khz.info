@@ -1,38 +1,91 @@
+:root {
+  --theme-0: #0d032b;
+  --theme-1: #190847;
+  --theme-2: #0c106f;
+  --theme-3: #5425E2;
+  --theme-4: #dc008e;
+  --theme-5: #c7ddfc;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url(Inter.ttf);
+}
+
+html {
+  /* Also defined in html file to prevent
+  the page from flashing white upon reload */
+  background-color: var(--theme-0);
+  overflow-y: scroll;
+}
+
+html * {
+  font-family: Inter;
+}
+
 .App {
-  text-align: center;
+  display: grid;
+  grid-template-areas: "header" "main" "footer";
+  grid-template-rows: auto 1fr 60px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+#loader {
+  background-color: var(--theme-1);
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+#loader img {
+  animation-duration: 1.2s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-iteration-count: infinite;
+  animation-name: spinner;
 }
 
-@keyframes App-logo-spin {
-  from {
+@keyframes spinner {
+  0% {
+    transform: rotate(-360deg);
+  }
+  99%, 100% {
     transform: rotate(0deg);
   }
-  to {
-    transform: rotate(360deg);
+}
+
+#loader.done {
+  animation: fade-out .25s cubic-bezier(0.075, 0.82, 0.165, 1) 1 forwards;
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
   }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+button {
+  background-color: unset;
+  color: var(--theme-5);
+  border: 3px solid var(--theme-2);
+  padding: 5px 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  -ms-transform: skewX(-20deg);
+  -webkit-transform: skewX(-20deg);
+  transform: skewX(-20deg);
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: var(--theme-3);
 }

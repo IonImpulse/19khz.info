@@ -1,0 +1,11 @@
+#branding {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    place-items: center;
+    color: white;
+}
+
+#areas {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+}
