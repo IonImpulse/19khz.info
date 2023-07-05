@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import Header from './components/header.js';
+import EventList from './components/eventList';
 
 // If dev, api is localhost:8000
 // If prod, api is https://19khz.info/
@@ -13,6 +14,7 @@ function App() {
   const [areas, setAreas] = React.useState([]);
 
   const [selectedArea, setSelectedArea] = React.useState(null);
+  const [location, setLocation] = React.useState(null);
 
   React.useEffect(() => {
     fetch(`${api}/events`)
@@ -35,17 +37,31 @@ function App() {
   React.useEffect(() => {
     if (loading === 0) {
       document.getElementById('loader').className = "done";
+      console.log("19khz.info is ready! Data loaded: ", events, areas);
     }
   }, [loading]);
 
   return (
     <>
       <div className="App">
-        <Header events={events} areas={areas} selectedArea={selectedArea} setSelectedArea={setSelectedArea} />
+        <Header 
+          events={events} 
+          areas={areas}
+          selectedArea={selectedArea}
+          setSelectedArea={setSelectedArea} 
+          location={location}
+          setLocation={setLocation}
+        />
+
+        <EventList 
+          events={events}
+          selectedArea={selectedArea}
+          location={location}
+        />
       </div>
 
       <div id="loader">
-        <img src="logo512.png"></img>
+        <img src="logo512.png" alt="19khz.info logo"></img>
       </div>
     </>
     

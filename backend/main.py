@@ -7,10 +7,33 @@ import httpx
 import csv
 from io import StringIO
 from typing import List
-import dateparser
+from datetime import datetime, timedelta
 import uvicorn
 
+'''
+
+Uses data from https://simplemaps.com/data/world-cities.
+
+'''
+
 BASE_URL = "https://19hz.info/events_"
+
+KEY_NAME_DICT = {
+    "BayArea": "Northern California",
+    "LosAngeles": "Southern California",
+    "Texas": "Texas",
+    "Miami": "Florida",
+    "Atlanta": "Atlanta",
+    "Seattle": "Seattle",
+    "DC": "Washington DC",
+    "Iowa": "Iowa / Nebraska",
+    "CHI": "Chicago",
+    "Detroit": "Detroit",
+    "Massachusetts": "Massachusetts",
+    "LasVegas": "Las Vegas",
+    "Phoenix": "Phoenix",
+    "PNW": "Portland / Vancouver",
+}
 
 NAME_KEY_DICT = {
     "Northern California": "BayArea",
@@ -45,6 +68,81 @@ KEY_TIMEZONE_DICT = {
     "Phoenix": "America/Phoenix",
     "PNW": "America/Los_Angeles",
 }
+
+US_AND_CANDADIAN_STATES = {
+    'AK': 'Alaska',
+    'AL': 'Alabama',
+    'AR': 'Arkansas',
+    'AS': 'American Samoa',
+    'AZ': 'Arizona',
+    'CA': 'California',
+    'CO': 'Colorado',
+    'CT': 'Connecticut',
+    'DC': 'District of Columbia',
+    'DE': 'Delaware',
+    'FL': 'Florida',
+    'GA': 'Georgia',
+    'GU': 'Guam',
+    'HI': 'Hawaii',
+    'IA': 'Iowa',
+    'ID': 'Idaho',
+    'IL': 'Illinois',
+    'IN': 'Indiana',
+    'KS': 'Kansas',
+    'KY': 'Kentucky',
+    'LA': 'Louisiana',
+    'MA': 'Massachusetts',
+    'MD': 'Maryland',
+    'ME': 'Maine',
+    'MI': 'Michigan',
+    'MN': 'Minnesota',
+    'MO': 'Missouri',
+    'MP': 'Northern Mariana Islands',
+    'MS': 'Mississippi',
+    'MT': 'Montana',
+    'NA': 'National',
+    'NC': 'North Carolina',
+    'ND': 'North Dakota',
+    'NE': 'Nebraska',
+    'NH': 'New Hampshire',
+    'NJ': 'New Jersey',
+    'NM': 'New Mexico',
+    'NV': 'Nevada',
+    'NY': 'New York',
+    'OH': 'Ohio',
+    'OK': 'Oklahoma',
+    'OR': 'Oregon',
+    'PA': 'Pennsylvania',
+    'PR': 'Puerto Rico',
+    'RI': 'Rhode Island',
+    'SC': 'South Carolina',
+    'SD': 'South Dakota',
+    'TN': 'Tennessee',
+    'TX': 'Texas',
+    'UT': 'Utah',
+    'VA': 'Virginia',
+    'VI': 'Virgin Islands',
+    'VT': 'Vermont',
+    'WA': 'Washington',
+    'WI': 'Wisconsin',
+    'WV': 'West Virginia',
+    'WY': 'Wyoming',
+    'AB': 'Alberta',
+    'BC': 'British Columbia',
+    'MB': 'Manitoba',
+    'NB': 'New Brunswick',
+    'NL': 'Newfoundland and Labrador',
+    'NT': 'Northwest Territories',
+    'NS': 'Nova Scotia',
+    'NU': 'Nunavut',
+    'ON': 'Ontario',
+    'PE': 'Prince Edward Island',
+    'QC': 'Quebec',
+    'SK': 'Saskatchewan',
+    'YT': 'Yukon'
+}
+
+CITIES = []
 
 app = FastAPI()
 
@@ -168,9 +266,9 @@ async def scrape_csv(csv_key):
         
         event["name"] = row[1]
         event["genres"] = [genre.strip() for genre in row[2].split(",")]
-        event["location"] = row[3]
-        event["price"] = row[5]
-        event["age"] = row[6]
+        event["location"] = get_location_obj(row[3], csv_key)
+        event["price"] = row[5].strip() if row[5].strip() != "" else None
+        event["age"] = row[6].strip() if row[6].strip() != "" else None
         event["organizer"] = row[7]
         event["ticket_link"] = row[8]
         event["event_link"] = row[9]
@@ -179,8 +277,62 @@ async def scrape_csv(csv_key):
 
     return events
 
-from datetime import datetime, timedelta
-import pytz
+def get_location_obj(location_string, csv_key):
+    # Venue name is first, then the city is in parentheses
+    # If no city is specified, just put blank
+    location = {}
+
+    if "(" in location_string and ")" in location_string:
+        location["city"] = location_string.split("(")[1].split(")")[0]
+        location["venue"] = location_string.split("(")[0].strip() 
+
+        # If there's a comma, there's a state
+        if location["city"].count(",") == 1:
+            location["state"] = US_AND_CANDADIAN_STATES[location["city"].split(",")[1].strip()]
+            location["city"] = location["city"].split(",")[0].strip()
+        elif location["city"].count(",") == 2:
+            # Discard the first value
+            location["state"] = US_AND_CANDADIAN_STATES[location["city"].split(",")[2].strip()]
+            location["city"] = location["city"].split(",")[1].strip()
+            
+        else:
+            location["state"] = KEY_NAME_DICT[csv_key]
+    else:
+        location["city"] = ""
+        location["venue"] = location_string.strip()
+        location["state"] = KEY_NAME_DICT[csv_key]
+
+    # Try to get the lat and long
+    try:
+        # Iterate through cities.csv and try to find a match
+        # Fields are: "city_ascii","lat","lng","country","iso2","iso3","admin_name","capital","population","id"
+        # Admin name is full state name
+
+        found = None
+
+        if "California" in location["state"]:
+            location["state"] = "California"
+
+        for row in CITIES:
+            if row[0].lower() == location["city"].lower() and row[6].lower() == location["state"].lower():
+                found = row
+                break
+
+        if found is not None:
+            location["lat"] = found[1]
+            location["lon"] = found[2]
+        else:
+            location["lat"] = None
+            location["lon"] = None
+
+    except Exception as e:
+        print(f"Error getting lat and long for {location['city']}, {location['state']}: {e}")
+        location["lat"] = None
+        location["lon"] = None
+
+    return location
+
+
 
 MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
 
@@ -192,7 +344,8 @@ def parse_date(date_string: str):
 
     # Determine if the date is this year or next year
     now = datetime.now()
-    if MONTHS.index(month) < now.month:
+
+    if MONTHS.index(month) + 1 < now.month:
         year = now.year + 1
     else:
         year = now.year
@@ -286,5 +439,16 @@ if __name__ == "__main__":
     except:
         pass
 
+    # Load worldcities.csv
+    with open("cities.csv", "r", encoding="utf8") as f:
+        reader = csv.reader(f)
+        
+        # Skip the first line
+        next(reader)
+
+        # Load the rest of the lines
+        CITIES = [row for row in reader]
+
+        
     # Run the server
     uvicorn.run(app, host="127.0.0.1", port=8000)

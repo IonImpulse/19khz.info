@@ -1,10 +1,10 @@
 :root {
-  --theme-0: #0d032b;
+  --theme-0: #070218;
   --theme-1: #190847;
   --theme-2: #0c106f;
   --theme-3: #5425E2;
   --theme-4: #dc008e;
-  --theme-5: #c7ddfc;
+  --theme-5: #dfe9f8;
 }
 
 @font-face {
@@ -30,7 +30,7 @@ html * {
 }
 
 #loader {
-  background-color: var(--theme-1);
+  background-color: var(--theme-0) !important;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -75,17 +75,39 @@ html * {
 button {
   background-color: unset;
   color: var(--theme-5);
-  border: 3px solid var(--theme-2);
-  padding: 5px 10px;
+  border: 1px solid var(--theme-3);
+  padding: 5px 5px;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  -ms-transform: skewX(-20deg);
-  -webkit-transform: skewX(-20deg);
-  transform: skewX(-20deg);
   font-weight: bold;
+  width: 100%;
+  min-height: 20px;
+  border-radius: 20px;
 }
 
 button:hover {
   background-color: var(--theme-3);
+}
+
+button.selected {
+  background-color: var(--theme-2);
+  color: var(--theme-5);
+}
+
+/*
+
+Mobile Styles
+
+*/
+
+@media (max-width: 768px) {
+  .App {
+    grid-template-areas: "header" "main" "footer";
+    grid-template-rows: auto 1fr 60px;
+  }
+
+  #loader img {
+    width: 40vw;
+  }
 }

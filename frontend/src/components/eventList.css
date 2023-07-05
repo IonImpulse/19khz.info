@@ -1,0 +1,88 @@
+#event-list {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+}
+
+.event {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  background-color: var(--theme-0);
+  color: var(--theme-5);
+  padding: 20px;
+  border-radius: 10px;
+  transition: 0.25s;
+  column-gap: 10px;
+  width: 60%;
+}
+
+.event:hover {
+  background-color: var(--theme-1);
+}
+
+.event .name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.event .genres {
+    font-size: 0.8rem;
+    font-style: italic;
+    margin: 5px 0;
+}
+
+.event .start-time,
+.event .end-time,
+.event .city {
+  color: var(--theme-2);
+}
+
+.event .link a {
+  color: var(--theme-3);
+  text-decoration: none;
+}
+
+.event .price {
+  color: var(--theme-4);
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+}
+
+.event .organizer {
+  font-style: italic;
+}
+
+.event .date {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    width: 100px;
+    height: 100px;
+    background-color: var(--theme-5);
+    color: black;
+}
+
+.event .date .day {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.event .date .month {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.event .date .day-of-week {
+    font-size: 1rem;
+    font-weight: bold;
+}
