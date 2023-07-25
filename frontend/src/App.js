@@ -16,6 +16,20 @@ function App() {
   const [selectedArea, setSelectedArea] = React.useState(null);
   const [location, setLocation] = React.useState(null);
 
+  // Use local storage to save events
+  const [savedEvents, setSavedEvents] = React.useState([]);
+
+  React.useEffect(() => {
+    const localSavedEvents = JSON.parse(localStorage.getItem('19khz_savedEvents'));
+    if (localSavedEvents) {
+      setSavedEvents(localSavedEvents);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    localStorage.setItem('19khz_savedEvents', JSON.stringify(savedEvents));
+  }, [savedEvents]);
+
   React.useEffect(() => {
     fetch(`${api}/events`)
       .then(res => res.json())
@@ -57,6 +71,8 @@ function App() {
           events={events}
           selectedArea={selectedArea}
           location={location}
+          savedEvents={savedEvents}
+          setSavedEvents={setSavedEvents}
         />
       </div>
 

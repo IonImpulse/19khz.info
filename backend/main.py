@@ -265,13 +265,19 @@ async def scrape_csv(csv_key):
         event["timestamp_end"] = timestamp_end
         
         event["name"] = row[1]
-        event["genres"] = [genre.strip() for genre in row[2].split(",")]
+        event["genres"] = []
+
+        for genre in row[2].split(","):
+            if genre.strip() != "":
+                event["genres"].append(genre.strip())
+
         event["location"] = get_location_obj(row[3], csv_key)
         event["price"] = row[5].strip() if row[5].strip() != "" else None
         event["age"] = row[6].strip() if row[6].strip() != "" else None
         event["organizer"] = row[7]
         event["ticket_link"] = row[8]
         event["event_link"] = row[9]
+
 
         events.append(event)
 
