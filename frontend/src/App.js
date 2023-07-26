@@ -13,7 +13,7 @@ function App() {
   const [events, setEvents] = React.useState([]);
   const [areas, setAreas] = React.useState([]);
 
-  const [selectedArea, setSelectedArea] = React.useState(null);
+  const [selectedArea, setSelectedArea] = React.useState("all");
   const [location, setLocation] = React.useState(null);
 
   // Use local storage to save events

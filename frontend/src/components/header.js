@@ -62,15 +62,29 @@ export default function Header(props) {
                     }
                 </button>
             </div>
-            <div id="areas">
-                <button className={"area " + (props.selectedArea == "all" ? "selected" : "")} onClick={() => props.setSelectedArea("all")}>All</button>
-                {Object.keys(props.areas).map(area => {
-                    return (
-                        <button className={"area " + (props.selectedArea == props.areas[area] ? "selected" : "")} key={area} onClick={() => props.setSelectedArea(props.areas[area])}>
-                            {area}
-                        </button>
-                    );
-                })}
+            <div id="filters">
+                <div id="areas-container">
+                    <select id="areas" onChange={(e) => props.setSelectedArea(e.target.value == "all" ? "all" : props.areas[e.target.value])}>
+                        <option value="all">All Areas</option>
+                        {Object.keys(props.areas).map(area => {
+                            return (
+                                <option value={area}>{area}</option>
+                            );
+                        })}
+                    </select>
+                </div>
+
+                <div id="age-container">
+                    <h2>Age</h2>
+                    <label for="age">All Ages</label>
+                    <input type="checkbox" id="age" name="age" value="all"></input>
+                    
+                    <label for="age">18+</label>
+                    <input type="checkbox" id="age" name="age" value="18"></input>
+                    
+                    <label for="age">21+</label>
+                    <input type="checkbox" id="age" name="age" value="21"></input>
+                </div>
             </div>
         </div>
     );

@@ -38,7 +38,17 @@ export default function EventList(props) {
             temp_current_events = props.events[props.selectedArea];
         }
 
-        // Filter out even
+        // Filter out events that have already passed
+        // Still show events that are happening today
+        // Can only use timestamp_start because timestamp_end is not always available
+        temp_current_events = temp_current_events.filter(event => {
+            let start = new Date(event.timestamp_start);
+            let now = new Date();
+
+            now.setHours(0, 0, 0, 0);
+
+            return start >= now;
+        });
 
         // Sort by timestamp start, then by timestamp end
         temp_current_events.sort((a, b) => {
@@ -120,6 +130,59 @@ export default function EventList(props) {
         }
     }
 
+    function timestampToTime(timestamp) {
+        let return_string = "";
+
+        let start = new Date(timestamp);
+        
+        let start_hour = start.getHours();
+        let start_minutes = start.getMinutes();
+        let start_ampm = "AM";
+
+        if (start_hour > 12) {
+            start_hour -= 12;
+            start_ampm = "PM";
+        } else if (start_hour === 12) {
+            start_ampm = "PM";
+        } else if (start_hour === 0) {
+            start_hour = 12;
+        }
+
+        return_string += start_hour;
+
+        if (start_minutes !== 0) {
+            return_string += ":";
+
+            if (start_minutes < 10) {
+                start_minutes = "0" + start_minutes;
+            }
+
+            return_string += start_minutes;
+        }
+
+        return_string += start_ampm;
+
+        return return_string;
+    }
+
+    function generateTimeInfo(event) {
+        // Generate a string like "10PM - 2:30AM"
+        // or "9:45PM" if no end time is available
+        let return_string = "";
+
+        let start = timestampToTime(event.timestamp_start);
+
+        if (event.timestamp_end) {
+            let end = timestampToTime(event.timestamp_end);
+
+            return_string += `${start} - ${end}`;
+        } else {
+            return_string += start;
+        }
+
+        return return_string;
+    }
+
 
     /*
     JSON fields in event object:
@@ -168,7 +231,9 @@ export default function EventList(props) {
                     }
                 }
 
-
+                // This string will inform people of when the event starts
+                // and ends on that day
+                let time_info = generateTimeInfo(event);
 
                 return (
                     <>
@@ -184,6 +249,8 @@ export default function EventList(props) {
                         </div>
                         <div className="general-info">
                             <div className="name">{event.name}</div>
+                            <div className="time">{time_info}</div>
+
                             <div className="genres">{event.genres.map(
                                 (genre, index) => {
                                     return (
