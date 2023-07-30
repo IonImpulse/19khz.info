@@ -155,7 +155,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-state = {"events": {}, "genres": []}
+state = {"events": {}, "genres": {}, "cities": {}}
 
 async def scrape_all() -> List[List[dict]]:
     events = {}
@@ -175,8 +175,27 @@ async def scrape_all() -> List[List[dict]]:
                 else:
                     genres[genre] = 1
 
+    # Consolidate cities
+    cities = {"all": {}}
+    
+    for key in events:
+        cities[key] = {}
+
+        for event in events[key]:
+            current_city = event["location"]["city"]
+
+            if current_city in cities[key]:
+                cities[key][current_city] += 1
+            else:
+                cities[key][current_city] = 1
+
+            if current_city in cities["all"]:
+                cities["all"][current_city] += 1
+            else:
+                cities["all"][current_city] = 1 
+
     print("Done scraping 19hz.info!")
-    return events, genres
+    return events, genres, cities
 
 async def get_csv_file(url):
     async with httpx.AsyncClient() as client:
@@ -273,7 +292,7 @@ async def scrape_csv(csv_key):
 
         event["location"] = get_location_obj(row[3], csv_key)
         event["price"] = row[5].strip() if row[5].strip() != "" else None
-        event["age"] = row[6].strip() if row[6].strip() != "" else None
+        event["age"] = normalize_age(row[6])
         event["organizer"] = row[7]
         event["ticket_link"] = row[8]
         event["event_link"] = row[9]
@@ -282,6 +301,19 @@ async def scrape_csv(csv_key):
         events.append(event)
 
     return events
+
+def normalize_age(age_string):
+    age = age_string.strip() if age_string.strip() != "" else None
+
+    if age is None:
+        return None
+
+    if "21" in age:
+        return 21
+    elif "18" in age:
+        return 18
+    else:
+        return 0
 
 def get_location_obj(location_string, csv_key):
     # Venue name is first, then the city is in parentheses
@@ -379,11 +411,9 @@ def parse_time(time_string: str, csv_key: str):
     if ":" in time_string:
         hour = get_number(time_string.split(":")[0])
         minute = get_number(time_string.split(":")[1])
-        ampm = time_string.split(":")[1]
     else:
         hour = get_number(time_string[:2])
         minute = 0
-        ampm = time_string
 
     if ampm == "pm" and hour != 12:
         hour += 12
@@ -412,6 +442,9 @@ async def get_genres():
 async def get_locations():
     return NAME_KEY_DICT
 
+@app.get("/cities")
+async def get_cities():
+    return state["cities"]
 
 class BackgroundRunner:
     def __init__(self):
@@ -422,7 +455,7 @@ class BackgroundRunner:
         await asyncio.sleep(1)
         while True:
             # Scrape quiz results
-            state["events"], state["genres"] = await scrape_all()
+            state["events"], state["genres"], state["cities"] = await scrape_all()
 
             # Save state to file
             with open("state.json", "w") as f:

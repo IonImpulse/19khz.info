@@ -49,18 +49,15 @@ function tryGeolocation(setLocation) {
 }
 
 export default function Header(props) {
+    console.log("Header props: ", props.loading);
+    if (props.loading > 0) {
+        return;
+    }
+
     return (
         <div id="header">
             <div id="branding">
-                <img id="logo" src="logo.svg" width="64px" alt="Stylized waveform logo"></img>
-                <h1>19kHz.info</h1>
-                <button id="get-location" onClick={() => tryGeolocation(props.setLocation)}>
-                    {props.location ?
-                        <span>You're at {props.location[0]} {props.location[1]}</span>
-                        :
-                        <span>Get Location</span>
-                    }
-                </button>
+                <h1>19kHz.<span>info</span></h1>
             </div>
             <div id="filters">
                 <div id="areas-container">
@@ -71,6 +68,18 @@ export default function Header(props) {
                                 <option value={area}>{area}</option>
                             );
                         })}
+                    </select>
+                </div>
+
+                <div id="city-container">
+                    <select id="city" onChange={(e) => props.setSelectedCity(e.target.value)}>
+                        <option value="all">All Cities</option>
+                        {Object.keys(props.cities[props.selectedArea]).filter(city => props.cities[props.selectedArea][city] >= 10).map(city => {
+                            return (
+                                <option value={city}>{city}</option>
+                            );
+                        })}
+                        <option value="other">Other</option>
                     </select>
                 </div>
 

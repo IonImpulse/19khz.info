@@ -183,6 +183,27 @@ export default function EventList(props) {
         return return_string;
     }
 
+    function openLocation(e, event) {
+        // Block the event div from opening
+        e.stopPropagation();
+
+        // Open the location in Google Maps, using general search of city, venue, and state
+        // not the exact coordinates
+        window.open(`https://www.google.com/maps/search/${event.location.venue}, ${event.location.city}, ${event.location.state}`, "_blank");
+    }
+
+    function generateAgeDiv(age) {
+        // Generate a div with age info.
+        // Age will be null, 0, 18, or 21
+
+        return (
+            <div className="event-age">
+                <span className={age === 0 ? "highlight all-ages" : ""}>All</span>
+                <span className={age === 18 ? "highlight over-18" : ""}>18+</span>
+                <span className={age === 21 ? "highlight over-21" : ""}>21+</span>
+            </div>
+        )
+    }
 
     /*
     JSON fields in event object:
@@ -214,7 +235,16 @@ export default function EventList(props) {
             // only render the first 20 events,
             // then render 20 more when the user scrolls to the bottom
                 
-            current_events.slice(0, renderNum).map(event => {
+            current_events.filter(event => {
+                // Filter by selected city
+                if (props.selectedCity !== "all") {
+                    if (event.location.city !== props.selectedCity) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }).slice(0, renderNum).map(event => {
                 let start = getMonthDayFromTimestamp(event.timestamp_start);
 
                 let prev_is_diff_day = (<></>);
@@ -254,16 +284,16 @@ export default function EventList(props) {
                             <div className="genres">{event.genres.map(
                                 (genre, index) => {
                                     return (
-                                        <span className="genre" key={index}>{genre}</span>
+                                        <button className="genre" key={index}>{genre}</button>
                                     );
                                 }
                             )}</div>
-                            <div className="location">{event.location.venue}, {event.location.city}, {event.location.state}</div>
+                            <div className="location" onMouseDown={(e) => openLocation(e, event)}>{event.location.venue}, {event.location.city}, {event.location.state}</div>
                             <div className="organizer">{event.organizer}</div>
                         </div>
                         <div className="ticket-info">
                             <div className="price">{event.price ?? "$???"}</div>
-                            <div className="age">{event.age ?? "No age specified"}</div>
+                            <div className="age">{generateAgeDiv(event.age)}</div>
                             {event.ticket_link != "" ? <button className="ticket-button" onClick={(e) => openTicket(e, event)}>Tickets</button> : ""}
                             {event.event_link != "" ? <button className="event-button" onClick={(e) => openEvent(e, event)}>More Info</button> : ""}
                         </div>

@@ -10,15 +10,40 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    
+
 }
 
 #branding {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    place-items: center;
-    color: white;
-    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    align-items: center;
+    background-color: var(--theme-1);
+    border-radius: 0 0 10px 10px ;
+}
+
+#branding h1, #branding span {
+    font-family: "TopShow";
+    font-size: 50px;
+    margin: 20px 0;
+    color: var(--theme-5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: text-shadow 0.2s ease-in-out;
+    cursor: pointer;
+    user-select: none;
+}
+
+#branding span {
+    color: var(--theme-4);
+}
+
+
+#branding img {
+    margin-left: 20px;
 }
 
 select {

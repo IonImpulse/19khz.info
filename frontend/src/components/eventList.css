@@ -27,13 +27,11 @@
 .event .name {
     font-size: 1.2rem;
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 4px;
 }
 
 .event .genres {
-    font-size: 0.8rem;
-    font-style: italic;
-    margin: 12px 0;
+    margin: 6px 0;
 }
 
 .event .genres .genre {
@@ -41,6 +39,10 @@
     padding: 5px;
     margin-right: 5px;
     border: 1px solid var(--theme-3);
+    width: fit-content;
+    font-style: italic;
+    font-weight: normal;
+    font-size: 0.8rem;
 }
 
 .event .start-time,
@@ -59,7 +61,19 @@
     font-weight: bold;
     margin-top: 10px;
     margin-bottom: 10px;
+}
 
+.event .location {
+  border-bottom: 1px solid var(--theme-5);
+  width: fit-content;
+  padding-bottom: 2px;
+  margin-bottom: 5px;
+  transition: border-bottom 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.event .location:hover {
+  border-bottom: 1px solid var(--theme-4);
+  color: var(--theme-4);
 }
 
 .event .organizer {
@@ -94,6 +108,30 @@
     font-size: 1rem;
     font-weight: bold;
 }
+
+.event .event-age {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  place-items: center;
+  color: var(--theme-3);
+}
+
+.event .event-age span.highlight {
+  font-weight: bold;
+}
+
+.event .event-age span.highlight.all-ages {
+  color: var(--all-ages);
+}
+
+.event .event-age span.highlight.over-18 {
+  color: var(--over-18);
+}
+
+.event .event-age span.highlight.over-21 {
+  color: var(--over-21);
+}
+
 
 .save-icon {
   background-image: url(../../public/img/save_empty.svg);

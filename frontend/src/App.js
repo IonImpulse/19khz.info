@@ -8,13 +8,15 @@ import EventList from './components/eventList';
 const api = window.location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://19khz.info';
 
 function App() {
-  const [loading, setLoading] = React.useState(2);
+  const [loading, setLoading] = React.useState(3);
 
   const [events, setEvents] = React.useState([]);
   const [areas, setAreas] = React.useState([]);
+  const [cities, setCities] = React.useState([]);
 
   const [selectedArea, setSelectedArea] = React.useState("all");
   const [location, setLocation] = React.useState(null);
+  const [selectedCity, setSelectedCity] = React.useState("all");
 
   // Use local storage to save events
   const [savedEvents, setSavedEvents] = React.useState([]);
@@ -48,6 +50,15 @@ function App() {
       });
   }, []);
 
+  React.useEffect (() => {
+    fetch(`${api}/cities`)
+      .then(res => res.json())
+      .then(data => {
+        setCities(data);
+        setLoading(prev => prev - 1);
+      });
+  }, []);
+
   React.useEffect(() => {
     if (loading === 0) {
       document.getElementById('loader').className = "done";
@@ -63,8 +74,12 @@ function App() {
           areas={areas}
           selectedArea={selectedArea}
           setSelectedArea={setSelectedArea} 
+          selectedCity={selectedCity}
+          setSelectedCity={setSelectedCity}
           location={location}
           setLocation={setLocation}
+          cities={cities}
+          loading={loading}
         />
 
         <EventList 
@@ -73,6 +88,7 @@ function App() {
           location={location}
           savedEvents={savedEvents}
           setSavedEvents={setSavedEvents}
+          selectedCity={selectedCity}
         />
       </div>
 

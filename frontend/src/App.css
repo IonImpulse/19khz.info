@@ -5,11 +5,21 @@
   --theme-3: #5425E2;
   --theme-4: #dc008e;
   --theme-5: #dfe9f8;
+  --theme-6: #baabfa;
+
+  --all-ages: #40d44d;
+  --over-18: #d4d44d;
+  --over-21: #d44d4d;
 }
 
 @font-face {
   font-family: "Inter";
   src: url(Inter.ttf);
+}
+
+@font-face {
+  font-family: "TopShow";
+  src: url(TopShow.otf);
 }
 
 html {
