@@ -60,6 +60,17 @@ function App() {
   }, []);
 
   React.useEffect(() => {
+    setSelectedCity(prev => "all");
+    // Set selected area select element to "all"
+    let el = document.getElementById("city");
+
+    // If el is null, it means the page hasn't loaded yet
+    if (el) {
+      el.selectedIndex = 0;
+    }
+  }, [selectedArea]);
+
+  React.useEffect(() => {
     if (loading === 0) {
       document.getElementById('loader').className = "done";
       console.log("19khz.info is ready! Data loaded: ", events, areas);

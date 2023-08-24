@@ -49,7 +49,6 @@ function tryGeolocation(setLocation) {
 }
 
 export default function Header(props) {
-    console.log("Header props: ", props.loading);
     if (props.loading > 0) {
         return;
     }

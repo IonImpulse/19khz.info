@@ -78,19 +78,6 @@ export default function EventList(props) {
         }
     }
 
-    function clickOnEvent(event) {
-        // If a ticket link exists, open it in a new tab
-        // Otherwise, open the event link in a new tab
-        // If neither exist, do nothing
-        if (event.ticket_link != "") {
-            window.open(event.ticket_link, "_blank");
-        } else if (event.event_link != "") {
-            window.open(event.event_link, "_blank");
-        } else {
-            return;
-        }
-    }
-
     function openTicket(e, event) {
         // Block the event div from opening
         e.stopPropagation();
@@ -183,13 +170,13 @@ export default function EventList(props) {
         return return_string;
     }
 
-    function openLocation(e, event) {
-        // Block the event div from opening
-        e.stopPropagation();
-
+    function generateLocationLink(event) {
         // Open the location in Google Maps, using general search of city, venue, and state
         // not the exact coordinates
-        window.open(`https://www.google.com/maps/search/${event.location.venue}, ${event.location.city}, ${event.location.state}`, "_blank");
+        const str = `https://www.google.com/maps/search/${event.location.venue}, ${event.location.city}, ${event.location.state}`;
+        
+        // Url encode the string
+        return encodeURI(str);
     }
 
     function generateAgeDiv(age) {
@@ -269,7 +256,7 @@ export default function EventList(props) {
                     <>
                     {prev_is_diff_day}
 
-                    <div className="event" key={event.id} onClick={() => clickOnEvent(event)}>
+                    <div className="event" key={event.id}>
                         <div className="date-info">
                             <div className="date">
                                 <div className="month">{start.month}</div>
@@ -288,7 +275,9 @@ export default function EventList(props) {
                                     );
                                 }
                             )}</div>
-                            <div className="location" onMouseDown={(e) => openLocation(e, event)}>{event.location.venue}, {event.location.city}, {event.location.state}</div>
+                            <div className="location"><a href={generateLocationLink(event)} target="_blank" rel="noreferrer">
+                                {event.location.venue}, {event.location.city}, {event.location.state}
+                            </a></div>
                             <div className="organizer">{event.organizer}</div>
                         </div>
                         <div className="ticket-info">
@@ -298,7 +287,7 @@ export default function EventList(props) {
                             {event.event_link != "" ? <button className="event-button" onClick={(e) => openEvent(e, event)}>More Info</button> : ""}
                         </div>
                         <div className="save-container">
-                            <button className={`save-icon ${isEventSaved(event) ? "saved" : ""}`} onClick={(e) => toggleSaveEvent(e, event)}></button>
+                            <button aria-label="Save event" className={`save-icon ${isEventSaved(event) ? "saved" : ""}`} onClick={(e) => toggleSaveEvent(e, event)}></button>
                         </div>
                     </div>
                     </>

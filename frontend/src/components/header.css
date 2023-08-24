@@ -55,6 +55,16 @@ select {
     font-size: 1rem;
     width: 100%;
     font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    width: 200px;
+}
+
+select:hover {
+    background-color: var(--theme-1);
+}
+
+select:active {
 }
 
 option {

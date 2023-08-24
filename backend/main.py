@@ -377,8 +377,8 @@ MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", 
 def parse_date(date_string: str):
     date_string = date_string.strip()
     # Something along the lines of "Jun 6" or "Aug 29"
-    month = date_string.split(" ")[0].strip()
-    day = int(date_string.split(" ")[1].strip())
+    month = date_string.split(" ")[0].strip().replace(",", "")
+    day = int(date_string.split(" ")[1].strip().replace(",", ""))
 
     # Determine if the date is this year or next year
     now = datetime.now()

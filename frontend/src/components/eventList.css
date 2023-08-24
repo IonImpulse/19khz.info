@@ -17,7 +17,6 @@
   transition: 0.25s;
   column-gap: 10px;
   width: 60%;
-  cursor: pointer;
 }
 
 .event:hover {
@@ -64,14 +63,20 @@
 }
 
 .event .location {
-  border-bottom: 1px solid var(--theme-5);
   width: fit-content;
   padding-bottom: 2px;
   margin-bottom: 5px;
-  transition: border-bottom 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
-.event .location:hover {
+.event .location a {
+  color: var(--theme-6);
+  text-decoration: none;
+  border-bottom: 1px solid var(--theme-6);
+  transition: border-bottom 0.2s ease-in-out, color 0.2s ease-in-out;
+
+}
+
+.event .location:hover a {
   border-bottom: 1px solid var(--theme-4);
   color: var(--theme-4);
 }
@@ -145,19 +150,28 @@
 }
 
 .save-icon:hover {
-  background-image: url(../../public/img/save_filled.svg);
-  opacity: 1;
+  opacity: .5;
   border: unset;
   background-color: unset;
 }
 
 .save-icon:active {
-  background-image: url(../../public/img/save_filled.svg);
-  opacity: .9;
+  opacity: 1;
+  border: unset;
+  background-color: unset;
+  transform: scale(.95);
 }
 
 .save-icon.saved {
-  background-image: url(../../public/img/save_filled.svg);
+  background-image: url(../../public/img/save_filled.svg) !important;
+}
+
+.save-icon.saved:hover {
+  opacity: .8;
+}
+
+.save-icon.saved:active {
+  opacity: 1;
 }
 
 .ticket-button, .event-button {

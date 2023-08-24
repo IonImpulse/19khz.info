@@ -100,6 +100,10 @@ button:hover {
   background-color: var(--theme-3);
 }
 
+button:active {
+  transform: scale(0.95);
+}
+
 button.selected {
   background-color: var(--theme-2);
   color: var(--theme-5);
