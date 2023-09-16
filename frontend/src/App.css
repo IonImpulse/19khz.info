@@ -5,7 +5,8 @@
   --theme-3: #5425E2;
   --theme-4: #dc008e;
   --theme-5: #dfe9f8;
-  --theme-6: #baabfa;
+  --theme-6: #d5ccff;
+  --theme-7: #2a2a85;
 
   --all-ages: #40d44d;
   --over-18: #d4d44d;
@@ -56,7 +57,7 @@ html * {
   animation-duration: 1.2s;
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   animation-iteration-count: infinite;
-  animation-name: spinner;
+  animation-name: pulse;
 }
 
 @keyframes spinner {
@@ -65,6 +66,18 @@ html * {
   }
   99%, 100% {
     transform: rotate(0deg);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
   }
 }
 

@@ -83,7 +83,6 @@ export default function Header(props) {
                 </div>
 
                 <div id="age-container">
-                    <h2>Age</h2>
                     <label for="age">All Ages</label>
                     <input type="checkbox" id="age" name="age" value="all"></input>
                     

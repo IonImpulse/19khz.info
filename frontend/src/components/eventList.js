@@ -155,19 +155,21 @@ export default function EventList(props) {
     function generateTimeInfo(event) {
         // Generate a string like "10PM - 2:30AM"
         // or "9:45PM" if no end time is available
-        let return_string = "";
-
         let start = timestampToTime(event.timestamp_start);
 
         if (event.timestamp_end) {
             let end = timestampToTime(event.timestamp_end);
 
-            return_string += `${start} - ${end}`;
+            return <>
+                <div className="start">{start}</div>
+                <div className="to">to</div>
+                <div className="end">{end}</div>
+            </>
         } else {
-            return_string += start;
+            return <>
+                <div>{start}</div>
+            </>;
         }
-
-        return return_string;
     }
 
     function generateLocationLink(event) {
@@ -252,6 +254,12 @@ export default function EventList(props) {
                 // and ends on that day
                 let time_info = generateTimeInfo(event);
 
+                let event_organizer = "";
+
+                if (event.organizer !== "") {
+                    event_organizer = "Presented by " + event.organizer;
+                }
+
                 return (
                     <>
                     {prev_is_diff_day}
@@ -263,11 +271,13 @@ export default function EventList(props) {
                                 <div className="day">{start.day}</div>
                                 <div className="day-of-week">{start.day_of_week}</div>
                             </div>
+
+                            <div className="time">
+                                {time_info}
+                            </div>
                         </div>
                         <div className="general-info">
                             <div className="name">{event.name}</div>
-                            <div className="time">{time_info}</div>
-
                             <div className="genres">{event.genres.map(
                                 (genre, index) => {
                                     return (
@@ -278,13 +288,14 @@ export default function EventList(props) {
                             <div className="location"><a href={generateLocationLink(event)} target="_blank" rel="noreferrer">
                                 {event.location.venue}, {event.location.city}, {event.location.state}
                             </a></div>
-                            <div className="organizer">{event.organizer}</div>
+
+                            <div className="organizer">{event_organizer}</div>
                         </div>
                         <div className="ticket-info">
                             <div className="price">{event.price ?? "$???"}</div>
                             <div className="age">{generateAgeDiv(event.age)}</div>
-                            {event.ticket_link != "" ? <button className="ticket-button" onClick={(e) => openTicket(e, event)}>Tickets</button> : ""}
-                            {event.event_link != "" ? <button className="event-button" onClick={(e) => openEvent(e, event)}>More Info</button> : ""}
+                            {event.ticket_link !== "" ? <button className="ticket-button" onClick={(e) => openTicket(e, event)}>Tickets</button> : ""}
+                            {event.event_link !== "" ? <button className="event-button" onClick={(e) => openEvent(e, event)}>More Info</button> : ""}
                         </div>
                         <div className="save-container">
                             <button aria-label="Save event" className={`save-icon ${isEventSaved(event) ? "saved" : ""}`} onClick={(e) => toggleSaveEvent(e, event)}></button>
