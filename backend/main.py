@@ -3,6 +3,7 @@ import json
 import re
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import httpx
 import csv
 from io import StringIO
@@ -154,6 +155,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# add static files
+app.mount("/", StaticFiles(directory="../frontend/build", html=True), name="static")
 
 state = {"events": {}, "genres": {}, "cities": {}}
 
