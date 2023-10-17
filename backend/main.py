@@ -156,9 +156,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# add static files
-app.mount("/", StaticFiles(directory="../frontend/build", html=True), name="static")
-
 state = {"events": {}, "genres": {}, "cities": {}}
 
 async def scrape_all() -> List[List[dict]]:
@@ -469,6 +466,9 @@ class BackgroundRunner:
 
 
 runner = BackgroundRunner()
+
+# add static files
+app.mount("/", StaticFiles(directory="../frontend/build", html=True), name="static")
 
 @app.on_event('startup')
 async def app_startup():
