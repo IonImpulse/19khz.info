@@ -94,34 +94,12 @@ export default function EventList(props) {
         window.open(event.event_link, "_blank");
     }
 
-    function isEventSaved(event) {
-        // Check if the event is already saved
-        for (let e of props.savedEvents) {
-            if (e.name === event.name && e.ticket_link === event.ticket_link) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    function toggleSaveEvent(e, event) {
-        // Block the event div from opening
-        e.stopPropagation();
-
-        // If the event is already saved, remove it from the saved events list
-        // Otherwise, add it to the saved events list
-        if (isEventSaved(event)) {
-            props.setSavedEvents(prev => prev.filter(e => e.name !== event.name && e.ticket_link !== event.ticket_link));
-        } else {
-            props.setSavedEvents(prev => [...prev, event]);
-        }
-    }
 
     function timestampToTime(timestamp) {
         let return_string = "";
 
         let start = new Date(timestamp);
-        
+
         let start_hour = start.getHours();
         let start_minutes = start.getMinutes();
         let start_ampm = "AM";
@@ -176,7 +154,7 @@ export default function EventList(props) {
         // Open the location in Google Maps, using general search of city, venue, and state
         // not the exact coordinates
         const str = `https://www.google.com/maps/search/${event.location.venue}, ${event.location.city}, ${event.location.state}`;
-        
+
         // Url encode the string
         return encodeURI(str);
     }
@@ -187,9 +165,9 @@ export default function EventList(props) {
 
         return (
             <div className="event-age">
-                <span className={age === 0 ? "highlight all-ages" : ""}>All</span>
-                <span className={age === 18 ? "highlight over-18" : ""}>18+</span>
-                <span className={age === 21 ? "highlight over-21" : ""}>21+</span>
+                <span className={age === "0" ? "highlight all-ages" : ""}>All</span>
+                <span className={age === "18" ? "highlight over-18" : ""}>18+</span>
+                <span className={age === "21" ? "highlight over-21" : ""}>21+</span>
             </div>
         )
     }
@@ -220,90 +198,94 @@ export default function EventList(props) {
     return (
         <div id="event-list">
             {
-            // Lazy load events, 
-            // only render the first 20 events,
-            // then render 20 more when the user scrolls to the bottom
-                
-            current_events.filter(event => {
-                // Filter by selected city
-                if (props.selectedCity !== "all") {
-                    if (event.location.city !== props.selectedCity) {
-                        return false;
+                // Lazy load events, 
+                // only render the first 20 events,
+                // then render 20 more when the user scrolls to the bottom
+
+                current_events.filter(event => {
+                    // Filter by selected city
+                    if (props.selectedCity !== "all") {
+                        if (event.location.city !== props.selectedCity) {
+                            return false;
+                        }
                     }
-                }
 
-                return true;
-            }).slice(0, renderNum).map(event => {
-                let start = getMonthDayFromTimestamp(event.timestamp_start);
-
-                let prev_is_diff_day = (<></>);
-                
-                if (current_events.indexOf(event) > 0) {
-                    const prev_event = current_events[current_events.indexOf(event) - 1];
-                    const prev_start = getMonthDayFromTimestamp(prev_event.timestamp_start);
-
-                    if (prev_start.day_int !== start.day_int) {
-                        prev_is_diff_day = (
-                            <div className="divider">
-                            </div>
-                        );
+                    // Filter by selected age
+                    if (props.selectedAge !== "0") {
+                        if (event.age !== props.selectedAge) {
+                            return false;
+                        }
                     }
-                }
 
-                // This string will inform people of when the event starts
-                // and ends on that day
-                let time_info = generateTimeInfo(event);
+                    return true;
+                }).slice(0, renderNum).map(event => {
+                    let start = getMonthDayFromTimestamp(event.timestamp_start);
 
-                let event_organizer = "";
+                    let prev_is_diff_day = (<></>);
 
-                if (event.organizer !== "") {
-                    event_organizer = "Presented by " + event.organizer;
-                }
+                    if (current_events.indexOf(event) > 0) {
+                        const prev_event = current_events[current_events.indexOf(event) - 1];
+                        const prev_start = getMonthDayFromTimestamp(prev_event.timestamp_start);
 
-                return (
-                    <>
-                    {prev_is_diff_day}
+                        if (prev_start.day_int !== start.day_int) {
+                            prev_is_diff_day = (
+                                <div className="divider">
+                                </div>
+                            );
+                        }
+                    }
 
-                    <div className="event" key={event.id}>
-                        <div className="date-info">
-                            <div className="date">
-                                <div className="month">{start.month}</div>
-                                <div className="day">{start.day}</div>
-                                <div className="day-of-week">{start.day_of_week}</div>
+                    // This string will inform people of when the event starts
+                    // and ends on that day
+                    let time_info = generateTimeInfo(event);
+
+                    let event_organizer = "";
+
+                    if (event.organizer !== "") {
+                        event_organizer = "Presented by " + event.organizer;
+                    }
+
+                    return (
+                        <>
+                            {prev_is_diff_day}
+
+                            <div className="event" key={event.id}>
+                                <div className="date-info">
+                                    <div className="date">
+                                        <div className="month">{start.month}</div>
+                                        <div className="day">{start.day}</div>
+                                        <div className="day-of-week">{start.day_of_week}</div>
+                                    </div>
+
+                                    <div className="time">
+                                        {time_info}
+                                    </div>
+                                </div>
+                                <div className="general-info">
+                                    <div className="name">{event.name}</div>
+                                    <div className="genres">{event.genres.map(
+                                        (genre, index) => {
+                                            return (
+                                                <button className="genre" key={index}>{genre}</button>
+                                            );
+                                        }
+                                    )}</div>
+                                    <div className="location"><a href={generateLocationLink(event)} target="_blank" rel="noreferrer">
+                                        {event.location.venue}, {event.location.city}, {event.location.state}
+                                    </a></div>
+
+                                    <div className="organizer">{event_organizer}</div>
+                                </div>
+                                <div className="ticket-info">
+                                    <div className="price">{event.price ?? "$???"}</div>
+                                    <div className="age">{generateAgeDiv(event.age)}</div>
+                                    {event.ticket_link !== "" ? <button className="ticket-button" onClick={(e) => openTicket(e, event)}>Tickets</button> : ""}
+                                    {event.event_link !== "" ? <button className="event-button" onClick={(e) => openEvent(e, event)}>More Info</button> : ""}
+                                </div>
                             </div>
-
-                            <div className="time">
-                                {time_info}
-                            </div>
-                        </div>
-                        <div className="general-info">
-                            <div className="name">{event.name}</div>
-                            <div className="genres">{event.genres.map(
-                                (genre, index) => {
-                                    return (
-                                        <button className="genre" key={index}>{genre}</button>
-                                    );
-                                }
-                            )}</div>
-                            <div className="location"><a href={generateLocationLink(event)} target="_blank" rel="noreferrer">
-                                {event.location.venue}, {event.location.city}, {event.location.state}
-                            </a></div>
-
-                            <div className="organizer">{event_organizer}</div>
-                        </div>
-                        <div className="ticket-info">
-                            <div className="price">{event.price ?? "$???"}</div>
-                            <div className="age">{generateAgeDiv(event.age)}</div>
-                            {event.ticket_link !== "" ? <button className="ticket-button" onClick={(e) => openTicket(e, event)}>Tickets</button> : ""}
-                            {event.event_link !== "" ? <button className="event-button" onClick={(e) => openEvent(e, event)}>More Info</button> : ""}
-                        </div>
-                        <div className="save-container">
-                            <button aria-label="Save event" className={`save-icon ${isEventSaved(event) ? "saved" : ""}`} onClick={(e) => toggleSaveEvent(e, event)}></button>
-                        </div>
-                    </div>
-                    </>
-                );
-            })}
+                        </>
+                    );
+                })}
         </div>
     );
 }

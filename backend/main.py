@@ -309,11 +309,11 @@ def normalize_age(age_string):
         return None
 
     if "21" in age:
-        return 21
+        return "21"
     elif "18" in age:
-        return 18
+        return "18"
     else:
-        return 0
+        return "0"
 
 def get_location_obj(location_string, csv_key):
     # Venue name is first, then the city is in parentheses
@@ -326,11 +326,11 @@ def get_location_obj(location_string, csv_key):
 
         # If there's a comma, there's a state
         if location["city"].count(",") == 1:
-            location["state"] = US_AND_CANDADIAN_STATES[location["city"].split(",")[1].strip()]
+            location["state"] = US_AND_CANDADIAN_STATES[location["city"].split(",")[1].strip().upper()]
             location["city"] = location["city"].split(",")[0].strip()
         elif location["city"].count(",") == 2:
             # Discard the first value
-            location["state"] = US_AND_CANDADIAN_STATES[location["city"].split(",")[2].strip()]
+            location["state"] = US_AND_CANDADIAN_STATES[location["city"].split(",")[2].strip().upper()]
             location["city"] = location["city"].split(",")[1].strip()
             
         else:

@@ -17,6 +17,7 @@ function App() {
   const [selectedArea, setSelectedArea] = React.useState("all");
   const [location, setLocation] = React.useState(null);
   const [selectedCity, setSelectedCity] = React.useState("all");
+  const [selectedAge, setSelectedAge] = React.useState("0");
 
   // Use local storage to save events
   const [savedEvents, setSavedEvents] = React.useState([]);
@@ -87,6 +88,8 @@ function App() {
           setSelectedArea={setSelectedArea} 
           selectedCity={selectedCity}
           setSelectedCity={setSelectedCity}
+          selectedAge={selectedAge}
+          setSelectedAge={setSelectedAge}
           location={location}
           setLocation={setLocation}
           cities={cities}
@@ -100,6 +103,7 @@ function App() {
           savedEvents={savedEvents}
           setSavedEvents={setSavedEvents}
           selectedCity={selectedCity}
+          selectedAge={selectedAge}
         />
       </div>
 

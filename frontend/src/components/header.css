@@ -101,22 +101,15 @@ Mobile Styles
 */
 
 @media (max-width: 768px) {
+    #filters {
+        flex-direction: column;
+        gap: 5px;
+    } 
+
     #branding {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr;
-        gap: 10px;
-        margin-bottom: 20px;
     }
 
     #branding button {
         width: 80%;
-    }
-
-    #areas {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr 1fr 1fr;
-        gap: 10px;
-        margin-left: 10px;
-        margin-right: 10px;
     }
 }

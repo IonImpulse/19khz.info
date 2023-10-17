@@ -83,14 +83,11 @@ export default function Header(props) {
                 </div>
 
                 <div id="age-container">
-                    <label for="age">All Ages</label>
-                    <input type="checkbox" id="age" name="age" value="all"></input>
-                    
-                    <label for="age">18+</label>
-                    <input type="checkbox" id="age" name="age" value="18"></input>
-                    
-                    <label for="age">21+</label>
-                    <input type="checkbox" id="age" name="age" value="21"></input>
+                    <select id="age" onChange={(e) => props.setSelectedAge(e.target.value)}>
+                        <option value="0">All Ages</option>
+                        <option value="18">18+</option>
+                        <option value="21">21+</option>
+                    </select>
                 </div>
             </div>
         </div>
